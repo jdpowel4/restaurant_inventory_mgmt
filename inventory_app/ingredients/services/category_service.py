@@ -17,3 +17,11 @@ def get_or_create(
         return category
     
     return category_repo.create(session, name, sort)
+
+
+def get_by_name(
+        session: Session,
+        name: str,
+) -> IngredientCategory | None:
+    
+    return category_repo.get_by_name(session, name)

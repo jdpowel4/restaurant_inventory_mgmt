@@ -40,3 +40,11 @@ def get_all(
         session: Session
 ) -> Sequence[Unit]:
     return unit_repo.get_all(session)
+
+
+
+def get_by_name(
+        session: Session,
+        name: str
+) -> Unit | None:
+    return unit_repo.get_by_name(session, name)

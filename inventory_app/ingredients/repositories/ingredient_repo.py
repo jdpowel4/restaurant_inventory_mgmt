@@ -1,5 +1,6 @@
-from sqlalchemy import Select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
+from typing import Sequence
 
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
 from inventory_app.ingredients.models import Ingredient
@@ -17,14 +18,19 @@ def get_by_name(
         name: str
 ) -> Ingredient | None:
     
-    stmt = Select(Ingredient).join(Ingredient.item).where(Item.name == name)
+    stmt = select(Ingredient).join(Ingredient.item).where(Item.name == name)
 
     return session.scalar(stmt)
 
 
 
-def list_all():
-    pass
+def get_all(
+        session: Session
+) -> Sequence[Ingredient]:
+    stmt = (select(Ingredient)
+    .join(Ingredient.item)
+    .order_by(Item.name))
+    return list(session.scalars(stmt))
 
 
 def get_by_category():

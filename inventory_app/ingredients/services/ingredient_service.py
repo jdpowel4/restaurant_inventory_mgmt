@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import Optional, Sequence
 
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
 from inventory_app.common.enums import ItemType
@@ -54,3 +54,9 @@ def get_or_create(
     ingredient = ingredient_repo.create(session, ing)
 
     return ingredient
+
+
+def get_all(
+        session: Session
+) -> Sequence[Ingredient]:
+    return ingredient_repo.get_all(session)

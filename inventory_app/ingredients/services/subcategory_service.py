@@ -24,3 +24,11 @@ def get_or_create(
     )
 
     return subcategory_repo.create(session, subcategory)
+
+
+def get_by_name(
+        session: Session,
+        name: str
+) -> IngredientSubcategory | None:
+    
+    return subcategory_repo.get_by_name(session, name)
