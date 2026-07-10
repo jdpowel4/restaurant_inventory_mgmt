@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
+from inventory_app.shared.exceptions import UnknownSubcategoryError
 
 from inventory_app.ingredients.models import IngredientSubcategory, IngredientCategory
 from inventory_app.ingredients.repositories import subcategory_repo
@@ -29,6 +30,11 @@ def get_or_create(
 def get_by_name(
         session: Session,
         name: str
-) -> IngredientSubcategory | None:
+) -> IngredientSubcategory:
     
-    return subcategory_repo.get_by_name(session, name)
+    subcategory = subcategory_repo.get_by_name(session, name)
+
+    if subcategory is None:
+        raise UnknownSubcategoryError(name)
+    
+    return subcategory

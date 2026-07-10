@@ -1,5 +1,7 @@
 # Restaurant Inventory Management
 
+Forgive me Father, for I have sinned... this README is 100% AI generated. Don't hate me... I just suck at essays and the likes. That being said i don't think this would be considered vibe-coding, granted chat-gpt has helped get me started, but this is my second revision and I have never copy-pasted, so i think its fairly kosher... or atleast it looks good from my house.
+
 A Python-based inventory management, recipe costing, purchasing, and reporting system built specifically for restaurants.
 
 This project is designed as a long-term replacement for commercial systems such as ChefTec and Restaurant365 while remaining lightweight, fully customizable, and entirely self-hosted.
@@ -100,15 +102,25 @@ The CLI, future desktop application, and future API all interact with the same s
 # Project Structure
 
 inventory_app/
+
 |--cli/
+
 |--ingredients/
+
 |--inventory/
+
 |--items/
+
 |--purchases/
+
 |--recipes/
+
 |--units/
+
 |--vendors/
+
 |--shared/
+
 |--common/
 
 

@@ -1,4 +1,4 @@
-from sqlalchemy import Select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
@@ -18,3 +18,10 @@ def create(
     )
 
     return item_repo.create(session, item)
+
+
+def get_by_name(
+        session: Session,
+        name: str
+) -> Item | None:
+    return item_repo.get_by_name(session, name)

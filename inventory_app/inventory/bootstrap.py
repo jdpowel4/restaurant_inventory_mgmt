@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
 from inventory_app.shared.db import session_scope
 
-from inventory_app.inventory.services import locations
+from inventory_app.inventory.services import location_service
 from inventory_app.inventory.models import *
 
 
@@ -15,19 +15,17 @@ def seed_defaults(
 ):
     
     DEFUALT_LOCATIONS = [
-        "Walk-In Cooler",
-        "Walk-In Freezer",
-        "Dry Storage",
-        "Prep Line",
-        "Reach-In Cooler",
-        "Reach-In Freezer",
-        "Bar",
-        "Produce Storage",
-        "Chemical Storage"
+        "Building",
+        "Dish Pit",
+        "Dry Stock",
+        "Freezer",
+        "Wait-Station",
+        "Walk-in",
+        "3-Door"
     ]
 
     for name in DEFUALT_LOCATIONS:
 
-        locations.get_or_create(session, name)
+        location_service.get_or_create(session, name)
 
     print("Successfully seeded Inventory Categories")

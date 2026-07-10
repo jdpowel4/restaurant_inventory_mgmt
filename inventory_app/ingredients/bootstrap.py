@@ -132,7 +132,7 @@ def seed_defaults(
     
     print("Successfully Seeded Ingredient Categories and Subcategories")
 
-
+'''
     units = {u.name: u for u in unit_service.get_all(session)}
 
     ingredients = {}
@@ -156,3 +156,4 @@ def seed_defaults(
         
     print("Successfully Seeded Ingredient Specicific Unit Conversions")
 
+'''

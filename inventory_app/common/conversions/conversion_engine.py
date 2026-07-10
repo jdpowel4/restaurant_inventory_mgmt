@@ -75,7 +75,7 @@ class ConversionEngine:
         # Still Nothing -> Raise Error
         if ingredient:
             raise MissingIngredientConversion(
-                ingredient.name,
+                ingredient.item.name,
                 from_unit.name,
                 to_unit.name
             )

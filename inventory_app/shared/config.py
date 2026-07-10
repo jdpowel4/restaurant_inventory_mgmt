@@ -12,7 +12,9 @@ INSTANCE_DIR = PROJECT_ROOT / "instance"
 
 DATABASE_PATH = INSTANCE_DIR / "inventory.db"
 
-INVOICE_DIR = INSTANCE_DIR / "invoices"
+IMPORTS_DIR = INSTANCE_DIR / "imports"
+
+INVOICE_DIR = IMPORTS_DIR / "invoices"
 
 EXPORT_DIR = INSTANCE_DIR / "exports"
 

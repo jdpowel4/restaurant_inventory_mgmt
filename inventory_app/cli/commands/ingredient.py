@@ -1,8 +1,9 @@
-import argparse
+from argparse import RawDescriptionHelpFormatter
+from decimal import Decimal
 
 from inventory_app.shared.db import session_scope
-from inventory_app.ingredients.services import ingredient_service, category_service, subcategory_service, conversion_service
-from inventory_app.units.services import unit_service
+from inventory_app.ingredients.services import ingredient_service, conversion_service
+from inventory_app.ingredients.importers import csv_importer
 
 def register_ingredient_commands(subparsers):
 
@@ -10,11 +11,29 @@ def register_ingredient_commands(subparsers):
 
     ingredient_sub = parser.add_subparsers(dest="ingredient_command")
 
-    add_parser = ingredient_sub.add_parser("add")
-    add_parser.add_argument("name")
-    add_parser.add_argument("category")
-    add_parser.add_argument("subcategory")
-    add_parser.add_argument("base_unit")
+    add_parser = ingredient_sub.add_parser(
+        "create",
+        formatter_class=RawDescriptionHelpFormatter,
+        description="""
+        Creates a new Ingredient.
+        
+        The ingredient name must be unique.
+        Units must already exist.
+        Categories must already exist.
+        """,
+        epilog="""
+        Examples:
+            inventory ingredient create...
+        """)
+    
+    
+    add_parser.add_argument("--name", required=True)
+    add_parser.add_argument("--category", required=True)
+    add_parser.add_argument("--subcategory", required=True)
+    add_parser.add_argument("--base-unit", required=True)
+    add_parser.add_argument("--count-unit")
+    add_parser.add_argument("--purchase-unit")
+    add_parser.add_argument("--location")
     add_parser.set_defaults(func=add_ingredient_command)
 
     list_parser = ingredient_sub.add_parser("list")
@@ -27,33 +46,34 @@ def register_ingredient_commands(subparsers):
     conversion_parser.add_argument("multiplier")
     conversion_parser.set_defaults(func=conversion_command)
 
+    import_parser = ingredient_sub.add_parser(
+        "import",
+        formatter_class=RawDescriptionHelpFormatter,
+        description="""
+        Imports ingredient list. Must be csv file with headers of 'name', 'category', 'subcategory', 'loaction', 'base_unit', 'count_unit', and 'purchase_unit'
+        """
+        )
+    import_parser.add_argument("file")
+    import_parser.set_defaults(func=import_ingredient_command)
+
+    import_conversion = ingredient_sub.add_parser("import_conversion")
+    import_conversion.add_arguments("file")
+    import_conversion.set_defaults(func=import_conversion_command)
+
 
 def add_ingredient_command(args):
 
     with session_scope() as session:
 
-        cat_obj = category_service.get_by_name(session, args.category)
-        if cat_obj is None:
-            print(f"Unknown Category '{args.category}'")
-            return
-        
-        sub_obj = subcategory_service.get_by_name(session, args.subcategory)
-        if sub_obj is None:
-            print(f"Unknown Subcategory '{args.subcategory}'")
-            return
-        
-        unit_obj = unit_service.get_by_name(session, args.base_unit)
-        if unit_obj is None:
-            print(f"Unknown Unit '{args.base_unit}'")
-            return
-
-
-        ingredient_service.get_or_create(
+        ingredient_service.create_by_name(
             session,
             name=args.name,
-            category=cat_obj,
-            subcategory=sub_obj,
-            base_unit=unit_obj
+            category=args.category,
+            subcategory=args.subcategory,
+            base_unit=args.base_unit,
+            count_unit=args.count_unit,
+            purchase_unit=args.purchase_unit,
+            location=args.location
         )
 
 
@@ -72,28 +92,23 @@ def conversion_command(args):
 
     with session_scope() as session:
 
-        ing_obj = ingredient_service.get_by_name(session, args.ingredient)
-        if ing_obj is None:
-            print(f"Unknown Ingredient '{args.ingredient}'")
-            return
-        
-        from_unit_obj = unit_service.get_by_name(session, args.from_unit)
-        if from_unit_obj is None:
-            print(f"Unknown Unit '{args.from_unit}'")
-            return
-        
-        to_unit_obj = unit_service.get_by_name(session, args.to_unit)
-        if to_unit_obj is None:
-            print(f"Unknown Unit '{args.to_unit}'")
-            return
-        
-
-        conversion_service.create(
+        conversion_service.create_by_name(
             session,
-            ing_obj,
-            from_unit_obj,
-            to_unit_obj,
-            int(args.multiplier)
+            ingredient=args.ingredient,
+            from_unit=args.from_unit,
+            to_unit=args.to_unit,
+            multiplier=Decimal(args.multiplier)
         )
 
-        print("Conversion added successfully")
+def import_ingredient_command(args):
+
+    with session_scope() as session:
+
+        csv_importer.import_ingredient(session, args.file)
+
+
+def import_conversion_command(args):
+
+    with session_scope() as session:
+
+        csv_importer.import_conversions(session, args.file)

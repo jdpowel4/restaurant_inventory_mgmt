@@ -4,6 +4,7 @@ from decimal import Decimal
 from collections.abc import Sequence
 
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
+from inventory_app.shared.exceptions import UnknownUnitError
 from inventory_app.units.repositories import unit_repo
 from inventory_app.units.models import Unit, UnitCategory
 
@@ -46,5 +47,11 @@ def get_all(
 def get_by_name(
         session: Session,
         name: str
-) -> Unit | None:
-    return unit_repo.get_by_name(session, name)
+) -> Unit:
+    
+    unit = unit_repo.get_by_name(session, name)
+
+    if unit is None:
+        raise UnknownUnitError(name)
+    
+    return unit

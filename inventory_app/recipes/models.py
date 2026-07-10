@@ -19,7 +19,6 @@ class Recipe(Base, TimestampMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     item_id: Mapped[int] = mapped_column(ForeignKey("items.id"), unique=True)
-    name: Mapped[str] = mapped_column(String, nullable=False)
 
     yield_qty: Mapped[Decimal] = mapped_column(Numeric(10, 2))
     yeild_unit_id: Mapped[int] = mapped_column(ForeignKey("units.id"))
@@ -39,7 +38,7 @@ class Recipe(Base, TimestampMixin):
 
 
     def __repr__(self) -> str:
-        return f"<Recipe(name='{self.name}')>"
+        return f"<Recipe(name='{self.item.name}')>"
 
 
 

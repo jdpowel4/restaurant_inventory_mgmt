@@ -1,4 +1,4 @@
-from sqlalchemy import Select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
@@ -17,3 +17,10 @@ def create(
     session.add(item)
     return item
     
+
+def get_by_name(
+        session: Session,
+        name: str
+) -> Item | None:
+    stmt = select(Item).where(Item.name == name)
+    return session.scalar(stmt)
