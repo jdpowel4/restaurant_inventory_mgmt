@@ -7,19 +7,14 @@ from inventory_app.units.models import Unit
 
 logger = get_logger(__name__)
 
-def get_by_ingredient():
-    pass
 
-
-def get_conversion(
+def get_ingredient_conversion(
         session: Session,
         ingredient: Ingredient
 ) -> list[IngredientUnitConversion]:
-    
     stmt = select(IngredientUnitConversion).where(
         IngredientUnitConversion.ingredient_id == ingredient.id
     )
-    
     return list(session.scalars(stmt))
 
 

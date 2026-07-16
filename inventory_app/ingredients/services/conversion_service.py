@@ -1,6 +1,7 @@
 from sqlalchemy import Select
 from sqlalchemy.orm import Session
 from decimal import Decimal
+from typing import Sequence
 
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
 from inventory_app.shared.exceptions import DuplicateConversionError
@@ -78,3 +79,10 @@ def create_by_name(
     )
 
     return conversion_repo.create(session, conv)
+
+
+def get_by_ingredient(
+        session: Session,
+        ingredient: Ingredient
+) -> Sequence[IngredientUnitConversion]:
+    return conversion_repo.get_ingredient_conversion(session, ingredient)

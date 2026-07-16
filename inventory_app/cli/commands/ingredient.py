@@ -1,5 +1,7 @@
 from argparse import RawDescriptionHelpFormatter
 from decimal import Decimal
+from pathlib import Path
+from inventory_app.shared.config import IMPORTS_DIR
 
 from inventory_app.shared.db import session_scope
 from inventory_app.ingredients.services import ingredient_service, conversion_service
@@ -56,8 +58,8 @@ def register_ingredient_commands(subparsers):
     import_parser.add_argument("file")
     import_parser.set_defaults(func=import_ingredient_command)
 
-    import_conversion = ingredient_sub.add_parser("import_conversion")
-    import_conversion.add_arguments("file")
+    import_conversion = ingredient_sub.add_parser("import-conversion")
+    import_conversion.add_argument("file")
     import_conversion.set_defaults(func=import_conversion_command)
 
 
@@ -104,7 +106,12 @@ def import_ingredient_command(args):
 
     with session_scope() as session:
 
-        csv_importer.import_ingredient(session, args.file)
+        file = IMPORTS_DIR / args.file
+
+        if not file.exists():
+            print(f"File not found: {file}")
+
+        csv_importer.import_ingredient(session, file)
 
 
 def import_conversion_command(args):

@@ -10,9 +10,9 @@ from inventory_app.inventory.services import location_service
 
 logger = get_logger(__name__)
 
-def import_ingredient(session: Session, file: Path) -> None:
+def import_ingredient(session: Session, path: Path) -> None:
     
-    with file.open(newline="", encoding="utf-8-sig") as f:
+    with path.open(newline="", encoding="utf-8-sig") as f:
         
         reader = csv.DictReader(f)
 

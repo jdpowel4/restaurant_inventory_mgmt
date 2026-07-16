@@ -18,10 +18,10 @@ def register_recipe_commands(subparsers):
         required=True,
         help="Name of the Recipe"
     )
-    add_parser.add_argument("--yield_qty")
-    add_parser.add_argument("yield-unit")
-    add_parser.add_argument("serving-qty")
-    add_parser.add_argument("serving-unit")
+    add_parser.add_argument("--yield-qty")
+    add_parser.add_argument("--yield-unit")
+    add_parser.add_argument("--serving-qty")
+    add_parser.add_argument("--serving-unit")
     add_parser.set_defaults(func=add_recipe_command)
 
     

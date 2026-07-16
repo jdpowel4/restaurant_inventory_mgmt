@@ -1,5 +1,5 @@
 import argparse
-from inventory_app.cli.commands import bootstrap, ingredient
+from inventory_app.cli.commands import bootstrap, ingredient, purchase
 
 
 def build_parser():
@@ -10,5 +10,6 @@ def build_parser():
 
     bootstrap.register_bootstrap_commands(subparsers)
     ingredient.register_ingredient_commands(subparsers)
+    purchase.register_invoice_commands(subparsers)
 
     return parser
