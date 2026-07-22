@@ -10,3 +10,10 @@ def get_by_item(
 ) -> Sequence[VendorItemConversion]:
     stmt = select(VendorItemConversion).where(VendorItemConversion.vendor_item == vendor_item)
     return list(session.scalars(stmt))
+
+def create(
+        session: Session,
+        conversion: VendorItemConversion
+) -> VendorItemConversion:
+    session.add(conversion)
+    return conversion

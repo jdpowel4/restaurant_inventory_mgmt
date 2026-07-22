@@ -4,7 +4,7 @@ if TYPE_CHECKING:
     from inventory_app.vendors.models import Vendor, VendorItem
     from inventory_app.inventory.models import InventoryLot
 
-from sqlalchemy import ForeignKey, Date, Numeric
+from sqlalchemy import ForeignKey, Date, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import date
 from decimal import Decimal
@@ -21,7 +21,7 @@ class Purchase(Base, TimestampMixin):
     id: Mapped[int] = mapped_column(primary_key=True)
     vendor_id: Mapped[int] = mapped_column(ForeignKey("vendors.id"))
 
-    invoice_number: Mapped[int] = mapped_column(nullable=False)
+    invoice_number: Mapped[str] = mapped_column(String, nullable=False)
     invoice_date: Mapped[date] = mapped_column(Date)
     total: Mapped[Decimal] = mapped_column(Numeric(10,2))
 

@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from sqlalchemy.orm import Session
 from typing import Sequence
 
@@ -54,3 +54,23 @@ def create(
 
     return unit
 
+
+def get_by_name_or_abbv(
+        session: Session,
+        value: str
+) -> Unit | None:
+    stmt = select(Unit).where(
+        or_(
+            Unit.name == value,
+            Unit.abbreviation == value
+        )
+    )
+    
+    matches = list(session.scalars(stmt))
+
+    match len(matches):
+        case 0:
+            return
+        case 1:
+            return matches[0]
+        

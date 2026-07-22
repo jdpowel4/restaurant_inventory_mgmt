@@ -133,3 +133,68 @@ def create_by_name(
     )
 
     return ingredient_repo.create(session, ing)
+
+
+def create(
+        session: Session,
+        name: str,
+        category: IngredientCategory | str,
+        subcategory: IngredientSubcategory | str,
+        base_unit: Unit | str,
+        count_unit: Unit | str,
+        purchase_unit: Unit | str
+) -> Ingredient:
+    
+    existing = ingredient_repo.get_by_name(session, name)
+
+    if existing is not None:
+        return existing
+    
+    category = _resolve_category(session, category)
+    subcategory = _resolve_subcategory(session, subcategory)
+    base_unit = _resolve_unit(session, base_unit)
+    count_unit = _resolve_unit(session, count_unit)
+    purchase_unit = _resolve_unit(session, purchase_unit)
+
+    item = item_service.create(session, name, ItemType.INGREDIENT)
+
+    ing = Ingredient(
+        item=item,
+        category=category,
+        subcategory=subcategory,
+        base_unit=base_unit,
+        count_unit=count_unit,
+        purchase_unit=purchase_unit
+    )
+
+    ingredient = ingredient_repo.create(session, ing)
+
+    return ingredient
+
+
+def _resolve_category(
+        session: Session,
+        name: IngredientCategory | str
+) -> IngredientCategory:
+    if isinstance(name, IngredientCategory):
+        return name
+    else:
+        return category_service.get_by_name(session, name)
+    
+def _resolve_subcategory(
+        session: Session,
+        name: IngredientSubcategory | str
+) -> IngredientSubcategory:
+    if isinstance(name, IngredientSubcategory):
+        return name
+    else:
+        return subcategory_service.get_by_name(session, name)
+    
+def _resolve_unit(
+        session: Session,
+        name: Unit | str
+) -> Unit:
+    if isinstance(name, Unit):
+        return name
+    else:
+        return unit_service.get_by_name_or_abbv(session, name)

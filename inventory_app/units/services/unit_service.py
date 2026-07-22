@@ -55,3 +55,21 @@ def get_by_name(
         raise UnknownUnitError(name)
     
     return unit
+
+def get_by_abbv(
+        session: Session,
+        abbv: str
+) -> Unit:
+    unit = unit_repo.get_by_abbreviation(session, abbv)
+    if unit is None:
+        raise UnknownUnitError(abbv)
+    return unit
+
+def get_by_name_or_abbv(
+        session: Session,
+        value: str
+) -> Unit:
+    unit = unit_repo.get_by_name_or_abbv(session, value.lower())
+    if unit is None:
+        raise UnknownUnitError(value)
+    return unit

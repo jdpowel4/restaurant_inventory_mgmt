@@ -6,7 +6,7 @@ from decimal import Decimal
 
 from inventory_app.common.base import Base
 import inventory_app.models
-from tests.factories import make_unit
+from tests.factories import *
 
 
 @pytest.fixture(scope="session")
@@ -42,4 +42,14 @@ def session(engine) ->Generator[Session, None, None]:
     session.rollback()
     session.close()
 
+@pytest.fixture
+def ketchup():
+    return make_ingredient(name="Ketchup")
 
+@pytest.fixture
+def mustard():
+    return make_ingredient(name="Mustard")
+
+@pytest.fixture
+def mayonnaise():
+    return make_ingredient(name="Mayonnaise")

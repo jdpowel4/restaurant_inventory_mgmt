@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from typing import Sequence
 
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
 from inventory_app.shared.exceptions import UnknownCategoryError
@@ -31,3 +32,8 @@ def get_by_name(
         raise UnknownCategoryError(name)
     
     return category
+
+def get_all(
+        session: Session
+) -> Sequence[IngredientCategory]:
+    return category_repo.get_all(session)

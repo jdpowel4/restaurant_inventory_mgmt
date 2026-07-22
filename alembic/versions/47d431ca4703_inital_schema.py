@@ -1,8 +1,8 @@
-"""Initial Schema
+"""Inital Schema
 
-Revision ID: 5f17d7dd31cd
+Revision ID: 47d431ca4703
 Revises: 
-Create Date: 2026-07-16 18:33:18.223974
+Create Date: 2026-07-21 02:08:30.402020
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '5f17d7dd31cd'
+revision: str = '47d431ca4703'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -85,7 +85,7 @@ def upgrade() -> None:
     op.create_table('purchases',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('vendor_id', sa.Integer(), nullable=False),
-    sa.Column('invoice_number', sa.Integer(), nullable=False),
+    sa.Column('invoice_number', sa.String(), nullable=False),
     sa.Column('invoice_date', sa.Date(), nullable=False),
     sa.Column('total', sa.Numeric(precision=10, scale=2), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
@@ -158,7 +158,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('event_type', sa.Enum('PURCHASE', 'RECIPE_PRODUCTION', 'ADJUSTMENT', 'WASTE', name='eventtype', native_enum=False), nullable=False),
     sa.Column('reference_type', sa.String(), nullable=False),
-    sa.Column('reference_id', sa.Integer(), nullable=False),
+    sa.Column('reference_id', sa.String(), nullable=False),
     sa.Column('purchase_id', sa.Integer(), nullable=True),
     sa.Column('recipe_id', sa.Integer(), nullable=True),
     sa.Column('notes', sa.Text(), nullable=True),
@@ -191,7 +191,7 @@ def upgrade() -> None:
     op.create_table('vendor_items',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('vendor_id', sa.Integer(), nullable=False),
-    sa.Column('ingredient_id', sa.Integer(), nullable=False),
+    sa.Column('ingredient_id', sa.Integer(), nullable=True),
     sa.Column('vendor_sku', sa.String(), nullable=False),
     sa.Column('vendor_description', sa.String(), nullable=False),
     sa.Column('pack_size', sa.Numeric(precision=10, scale=2), nullable=False),

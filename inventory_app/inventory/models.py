@@ -41,7 +41,7 @@ class InventoryLot(Base, TimestampMixin):
     event_id: Mapped[int] = mapped_column(ForeignKey("inventory_events.id"))
     ingredient_id: Mapped[int] = mapped_column(ForeignKey("ingredients.id"))
     purchase_item_id: Mapped[int] = mapped_column(ForeignKey("purchase_items.id"))
-    location_id: Mapped[int] = mapped_column(ForeignKey("inventory_locations.id"))
+    location_id: Mapped[int | None] = mapped_column(ForeignKey("inventory_locations.id"), nullable=True)
 
     original_qty: Mapped[Decimal] = mapped_column(Numeric(10, 4), nullable=False)
     remaining_qty: Mapped[Decimal] = mapped_column(Numeric(10, 4), nullable=False)
@@ -57,7 +57,7 @@ class InventoryLot(Base, TimestampMixin):
 
     event: Mapped["InventoryEvent"] = relationship()
     ingredient: Mapped["Ingredient"] = relationship(back_populates="lots")
-    location: Mapped["InventoryLocation"] = relationship(back_populates="lots")
+    location: Mapped[InventoryLocation | None] = relationship(back_populates="lots")
     purchase_item: Mapped["PurchaseItem"] = relationship(back_populates="lots")
 
 
@@ -105,7 +105,7 @@ class InventoryEvent(Base, TimestampMixin):
     )
 
     reference_type: Mapped[str] = mapped_column(String)
-    reference_id: Mapped[int] = mapped_column()
+    reference_id: Mapped[str] = mapped_column()
     purchase_id: Mapped[int | None] = mapped_column(ForeignKey("purchases.id"), nullable=True)
     recipe_id: Mapped[int | None] = mapped_column(ForeignKey("recipes.id"), nullable=True)
 

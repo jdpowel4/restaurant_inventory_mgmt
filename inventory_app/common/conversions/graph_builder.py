@@ -91,7 +91,7 @@ class GraphBuilder:
         graph: ConversionGraph,
         vendor_item: VendorItem
     ) -> None:
-        
+        print("Loading vendor edges")
         conversions = vendor_item_conversion_service.get_by_item(session, vendor_item)
 
         for conversion in conversions:

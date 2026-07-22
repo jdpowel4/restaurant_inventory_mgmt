@@ -57,10 +57,11 @@ class ConversionGraph:
     
     def find_path(
         self,
-        start,
-        end
+        from_unit,
+        to_unit
     ):
-        
+        start = from_unit.id
+        end = to_unit.id
         if start == end:
             return ConversionPath([], Decimal("1"))
 
@@ -106,5 +107,5 @@ class ConversionGraph:
                 )
         
         raise MissingConversionError(
-            f"No conversion path from {start} to {end}"
+            f"No conversion path from {from_unit} to {to_unit}"
         )

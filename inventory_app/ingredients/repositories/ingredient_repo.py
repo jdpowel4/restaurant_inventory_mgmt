@@ -18,7 +18,7 @@ def get_by_name(
         name: str
 ) -> Ingredient | None:
     
-    stmt = select(Ingredient).join(Ingredient.item).where(Item.name == name)
+    stmt = select(Ingredient).join(Ingredient.item).where(Item.name.ilike(name))
 
     return session.scalar(stmt)
 

@@ -1,6 +1,5 @@
 from argparse import RawDescriptionHelpFormatter
 from decimal import Decimal
-from pathlib import Path
 from inventory_app.shared.config import IMPORTS_DIR
 
 from inventory_app.shared.db import session_scope

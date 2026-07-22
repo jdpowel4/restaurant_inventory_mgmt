@@ -1,5 +1,5 @@
 import argparse
-from inventory_app.cli.commands import bootstrap, ingredient, purchase
+from inventory_app.cli.commands import bootstrap, ingredient, purchase, vendor
 
 
 def build_parser():

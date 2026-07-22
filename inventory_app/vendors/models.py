@@ -42,7 +42,7 @@ class VendorItem(Base, TimestampMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     vendor_id: Mapped[int] = mapped_column(ForeignKey("vendors.id"))
-    ingredient_id: Mapped[int] = mapped_column(ForeignKey("ingredients.id"))
+    ingredient_id: Mapped[int | None] = mapped_column(ForeignKey("ingredients.id"), nullable=True)
 
     vendor_sku: Mapped[str] = mapped_column(String)
     vendor_description: Mapped[str] = mapped_column(String)
@@ -56,9 +56,9 @@ class VendorItem(Base, TimestampMixin):
 
 
     ingredient: Mapped["Ingredient"] = relationship(back_populates="vendor_items")
-    pack: Mapped["Unit"] = relationship()
+    pack_unit: Mapped["Unit"] = relationship()
     vendor: Mapped["Vendor"] = relationship(back_populates="vendor_items")
-    conversions: Mapped["VendorItemConversion"] = relationship()
+    conversions: Mapped[list["VendorItemConversion"]] = relationship(back_populates="vendor_item")
 
 
     def __repr__(self) -> str:

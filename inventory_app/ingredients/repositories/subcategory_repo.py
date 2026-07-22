@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from typing import Sequence
 
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
 from inventory_app.ingredients.models import IngredientCategory, IngredientSubcategory
@@ -21,3 +22,11 @@ def create(
     
     session.add(subcategory)
     return subcategory
+
+
+def get_by_category_name(
+        session: Session,
+        category: str
+) -> Sequence[IngredientSubcategory]:
+    stmt = select(IngredientSubcategory).where(IngredientSubcategory.category==category)
+    return list(session.scalars(stmt))
