@@ -3,7 +3,7 @@ import re
 from sqlalchemy.orm import Session
 
 from inventory_app.vendors.mapping.dto import MatchResult
-from inventory_app.ingredients.services import ingredient_service
+from inventory_app.ingredients.services.ingredient_service import IngredientService
 
 
 class MapperMatcher:
@@ -16,11 +16,12 @@ class MapperMatcher:
     ) -> list[MatchResult]:
 
         matcher = MapperMatcher()
+        ingredient_service = IngredientService(session)
 
         cleaned = matcher._normalize(description)
 
 
-        ingredients = ingredient_service.get_all(session)
+        ingredients = ingredient_service.get_all()
 
 
         lookup = {

@@ -5,28 +5,40 @@ from typing import Sequence
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
 from inventory_app.ingredients.models import IngredientCategory, IngredientSubcategory
 
-def get_by_name(
-        session: Session,
-        name: str
-) -> IngredientSubcategory | None:
-    
-    stmt = select(IngredientSubcategory).where(IngredientSubcategory.name == name)
 
-    return session.scalar(stmt)
+class IngredientSubcategoryRepo:
+
+    def __init__(self, session: Session):
+
+        self.session = session
 
 
-def create(
-        session: Session,
-        subcategory: IngredientSubcategory
-) -> IngredientSubcategory:
-    
-    session.add(subcategory)
-    return subcategory
+    def get_by_name(
+            self,
+            name: str
+    ) -> IngredientSubcategory | None:
+
+        stmt = select(IngredientSubcategory).where(IngredientSubcategory.name == name)
+
+        return self.session.scalar(stmt)
 
 
-def get_by_category_name(
-        session: Session,
-        category: str
-) -> Sequence[IngredientSubcategory]:
-    stmt = select(IngredientSubcategory).where(IngredientSubcategory.category==category)
-    return list(session.scalars(stmt))
+    def create(
+            self,
+            subcategory: IngredientSubcategory
+    ) -> IngredientSubcategory:
+
+        self.session.add(subcategory)
+        return subcategory
+
+
+    def get_by_category_name(
+            self,
+            category: str
+    ) -> Sequence[IngredientSubcategory]:
+        stmt = (
+            select(IngredientSubcategory)
+            .join(IngredientCategory)
+            .where(IngredientCategory.name==category)
+        )
+        return list(self.session.scalars(stmt))

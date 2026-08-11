@@ -3,11 +3,11 @@ from sqlalchemy.orm import Session
 from inventory_app.common.conversions.graph import ConversionGraph
 from inventory_app.common.conversions.dto import ConversionSource
 from inventory_app.ingredients.models import Ingredient
-from inventory_app.ingredients.services import conversion_service as ingredient_conversion_service
+from inventory_app.ingredients.services.conversion_service import IngredientConversionService
 from inventory_app.vendors.models import VendorItem
-from inventory_app.vendors.services import conversion_service as vendor_item_conversion_service
+from inventory_app.vendors.services.conversion_service import VendorItemConversionService
 from inventory_app.units.models import Unit
-from inventory_app.units.services import unit_service
+from inventory_app.units.services.unit_service import UnitService
 
 class GraphBuilder:
 
@@ -40,12 +40,16 @@ class GraphBuilder:
         graph: ConversionGraph
     ) -> None:
         
-        units = unit_service.get_all(session)
+        unit_service = UnitService(session)
+
+        
+        units = unit_service.get_all()
 
         by_category: dict[int, list[Unit]] = {}
 
         for unit in units:
-            by_category.setdefault(unit.category_id, []).append(unit)
+            if unit.allow_global_conversions:
+                by_category.setdefault(unit.category_id, []).append(unit)
         
         for catrgory_units in by_category.values():
 
@@ -73,7 +77,9 @@ class GraphBuilder:
         ingredient: Ingredient
     ) -> None:
         
-        conversions = ingredient_conversion_service.get_by_ingredient(session, ingredient)
+        ingredient_conversion_service = IngredientConversionService(session)
+
+        conversions = ingredient_conversion_service.get_by_ingredient(ingredient)
 
         for conversion in conversions:
 
@@ -91,8 +97,10 @@ class GraphBuilder:
         graph: ConversionGraph,
         vendor_item: VendorItem
     ) -> None:
-        print("Loading vendor edges")
-        conversions = vendor_item_conversion_service.get_by_item(session, vendor_item)
+        
+        vendor_item_conversion_service = VendorItemConversionService(session)
+
+        conversions = vendor_item_conversion_service.get_by_item(vendor_item)
 
         for conversion in conversions:
 

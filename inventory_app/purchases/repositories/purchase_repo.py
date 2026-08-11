@@ -3,16 +3,22 @@ from sqlalchemy.orm import Session
 
 from inventory_app.purchases.models import Purchase
 
-def get_by_inv_numb(
-        session: Session,
-        number: str
-) -> Purchase | None:
-    stmt = select(Purchase).where(Purchase.invoice_number==number)
-    return session.scalar(stmt)
+class PurchaseRepo:
 
-def create(
-        session: Session,
-        purchase: Purchase
-) -> Purchase:
-    session.add(purchase)
-    return purchase
+        def __init__(self, session: Session):
+             
+             self.session = session
+
+        def get_by_inv_numb(
+                self,
+                number: str
+        ) -> Purchase | None:
+            stmt = select(Purchase).where(Purchase.invoice_number==number)
+            return self.session.scalar(stmt)
+
+        def create(
+                self,
+                purchase: Purchase
+        ) -> Purchase:
+            self.session.add(purchase)
+            return purchase

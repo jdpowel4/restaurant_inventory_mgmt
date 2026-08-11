@@ -2,47 +2,54 @@ from sqlalchemy.orm import Session
 from typing import Sequence
 
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
-from inventory_app.shared.exceptions import UnknownSubcategoryError
+from inventory_app.ingredients.exceptions import UnknownSubcategoryError
 
 from inventory_app.ingredients.models import IngredientSubcategory, IngredientCategory
-from inventory_app.ingredients.repositories import subcategory_repo
+from inventory_app.ingredients.repositories.subcategory_repo import IngredientSubcategoryRepo
 
 logger = get_logger(__name__)
 
-def get_or_create(
-        session: Session,
-        name: str,
-        category: IngredientCategory
-) -> IngredientSubcategory:
-    
-    existing = subcategory_repo.get_by_name(session, name)
 
-    if existing is not None:
-        return existing
-    
-    subcategory = IngredientSubcategory(
-        name=name,
-        category=category
-    )
+class IngredientSubcategoryService:
 
-    return subcategory_repo.create(session, subcategory)
+    def __init__(self, session: Session):
 
+        self.subcategory_repo = IngredientSubcategoryRepo(session)
 
-def get_by_name(
-        session: Session,
-        name: str
-) -> IngredientSubcategory:
-    
-    subcategory = subcategory_repo.get_by_name(session, name)
+    def get_or_create(
+            self,
+            name: str,
+            category: IngredientCategory
+    ) -> IngredientSubcategory:
 
-    if subcategory is None:
-        raise UnknownSubcategoryError(name)
-    
-    return subcategory
+        existing = self.subcategory_repo.get_by_name(name)
+
+        if existing is not None:
+            return existing
+
+        subcategory = IngredientSubcategory(
+            name=name,
+            category=category
+        )
+
+        return self.subcategory_repo.create(subcategory)
 
 
-def get_by_category_name(
-        session: Session,
-        category: str
-) -> Sequence[IngredientSubcategory]:
-    return subcategory_repo.get_by_category_name(session, category)
+    def get_by_name(
+            self,
+            name: str
+    ) -> IngredientSubcategory:
+
+        subcategory = self.subcategory_repo.get_by_name(name)
+
+        if subcategory is None:
+            raise UnknownSubcategoryError(name)
+
+        return subcategory
+
+
+    def get_by_category_name(
+            self,
+            category: str
+    ) -> Sequence[IngredientSubcategory]:
+        return self.subcategory_repo.get_by_category_name(category)

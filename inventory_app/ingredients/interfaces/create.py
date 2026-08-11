@@ -2,7 +2,9 @@ from sqlalchemy.orm import Session
 from rich.console import Console
 
 from inventory_app.ingredients.models import Ingredient
-from inventory_app.ingredients.services import ingredient_service, category_service, subcategory_service
+from inventory_app.ingredients.services.ingredient_service import IngredientService
+from inventory_app.ingredients.services.category_service import IngredientCategoryService
+from inventory_app.ingredients.services.subcategory_service import IngredientSubcategoryService
 from inventory_app.vendors.models import VendorItem
 
     
@@ -18,6 +20,10 @@ class IngredientInterface:
     ) -> Ingredient:
         
         self = IngredientInterface()
+        ingredient_service = IngredientService(session)
+        category_service = IngredientCategoryService(session)
+        subcategory_service = IngredientSubcategoryService(session)
+
 
         self.console.print("-" * 40)
         self.console.print("Create New Ingredient for Vendor Item:")
@@ -28,14 +34,14 @@ class IngredientInterface:
 
         name = self.console.input("Enter Ingredient Name: ")
 
-        get_category = category_service.get_all(session)
+        get_category = category_service.get_all()
 
         for category in get_category:
             self.console.print(category)
         
-        category = self.console.input("Enter Ingredient Category")
+        category = self.console.input("Enter Ingredient Category: ")
 
-        get_sub = subcategory_service.get_by_category_name(session, category)
+        get_sub = subcategory_service.get_by_category_name(category)
 
         for subcategory in get_sub:
             self.console.print(subcategory)
@@ -53,7 +59,6 @@ class IngredientInterface:
         if confirm == "y":
 
             return ingredient_service.create(
-                session,
                 name=name,
                 category=category,
                 subcategory=subcategory,
@@ -68,7 +73,7 @@ class IngredientInterface:
             self,
             session: Session
     ) -> Ingredient:
-        
+        ingredient_service = IngredientService(session)
         hint = self.console.input("Please enter a closer match: ")
 
-        return ingredient_service.get_by_name(session, hint)
+        return ingredient_service.get_by_name(hint)

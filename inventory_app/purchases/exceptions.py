@@ -11,3 +11,6 @@ class UnknownFileTypeError(ImportError):
 
 class UnknownVendorError(ImportError):
     pass
+
+class DuplicatePurchaseError(PurchaseError):
+    pass

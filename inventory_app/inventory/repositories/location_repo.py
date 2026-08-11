@@ -6,22 +6,26 @@ from inventory_app.inventory.models import InventoryLocation
 
 logger = get_logger(__name__)
 
-def get_by_name(
-        session: Session,
-        name: str
-) -> InventoryLocation | None:
-    
-    stmt = select(InventoryLocation).where(InventoryLocation.name == name)
+class InventoryLocationRepo:
 
-    return session.scalar(stmt)
+        def __init__(self, session: Session):
+             
+             self.session = session
 
+        def get_by_name(
+                self,
+                name: str
+        ) -> InventoryLocation | None:
+        
+            stmt = select(InventoryLocation).where(InventoryLocation.name == name)
 
+            return self.session.scalar(stmt)
 
-def create(
-        session: Session,
-        location: InventoryLocation
-) -> InventoryLocation:
+        def create(
+                self,
+                location: InventoryLocation
+        ) -> InventoryLocation:
 
-    session.add(location)
+            self.session.add(location)
 
-    return location
+            return location

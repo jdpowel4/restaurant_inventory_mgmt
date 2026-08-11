@@ -5,9 +5,9 @@ from decimal import Decimal
 from inventory_app.common.conversions.exceptions import MissingConversionError
 from inventory_app.purchases.models import PurchaseItem
 from inventory_app.units.models import Unit
-from inventory_app.units.services import unit_service
-from inventory_app.ingredients.services import conversion_service as ingredient_conversion_service
-from inventory_app.vendors.services import conversion_service as vendor_item_conversion_sercive
+from inventory_app.units.services.unit_service import UnitService
+from inventory_app.ingredients.services.conversion_service import IngredientConversionService
+from inventory_app.vendors.services.conversion_service import VendorItemConversionService
 from inventory_app.vendors.enum import ConversionSource
 
 class ConversionInterface():
@@ -36,8 +36,11 @@ class ConversionInterface():
         """  
 
         self = ConversionInterface()
+        ingredient_conversion_service = IngredientConversionService(session)
+        vendor_item_conversion_service = VendorItemConversionService(session)
+
         self.console.print(error)
-        self.console.print("Please create a unit conversion for this item.")
+        self.console.print(f"Please create a unit conversion for item {object.vendor_item.vendor_description}.")
         while True:
             conversion_type = self.console.input("Density or Pack? ").strip().lower()
 
@@ -53,15 +56,8 @@ class ConversionInterface():
         to_unit = self._resolve_unit(session, self.console.input("Please enter To Unit: "))
         multiplier = Decimal(self.console.input("Please enter multiplier: "))
 
-        print(f"ingredient={object.vendor_item.ingredient}")
-        print(f"vendor item={object.vendor_item}")
-        print(f"from unit={from_unit}")
-        print(f"to_unit={to_unit}")
-        print(f"multiplier={multiplier}")
-
         if conversion_type.lower() in ("density", "ingredient"):
             ingredient_conversion_service.create(
-                session,
                 ingredient=object.vendor_item.ingredient,
                 from_unit=from_unit,
                 to_unit=to_unit,
@@ -89,8 +85,7 @@ class ConversionInterface():
                     self.console.print("Please make your selection again")
 
 
-            vendor_item_conversion_sercive.create(
-                session,
+            vendor_item_conversion_service.create(
                 item=object.vendor_item,
                 from_unit=from_unit,
                 to_unit=to_unit,
@@ -103,7 +98,8 @@ class ConversionInterface():
         session: Session,
         name: Unit | str
     ) -> Unit:
+        unit_service = UnitService(session)
         if isinstance(name, Unit):
             return name
         else:
-            return unit_service.get_by_name_or_abbv(session, name)
+            return unit_service.get_by_name_or_abbv(name)

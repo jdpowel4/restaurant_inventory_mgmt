@@ -48,7 +48,7 @@ def setup_logging() -> logging.Logger:
     console_handler.setFormatter(formatter)
 
     logger.addHandler(file_handler)
-    logger.addHandler(console_handler)
+    # logger.addHandler(console_handler)
 
     return logger
 """

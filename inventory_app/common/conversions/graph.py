@@ -62,6 +62,7 @@ class ConversionGraph:
     ):
         start = from_unit.id
         end = to_unit.id
+
         if start == end:
             return ConversionPath([], Decimal("1"))
 

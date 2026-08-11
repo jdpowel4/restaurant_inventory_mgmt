@@ -34,8 +34,9 @@ def with_session(func):
 
 @contextmanager
 def session_scope(session: Session | None = None):
-
-    session = SessionLocal()
+    
+    if session is None:
+        session = SessionLocal()
 
     try:
         yield session

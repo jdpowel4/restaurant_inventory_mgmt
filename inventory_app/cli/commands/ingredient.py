@@ -3,7 +3,8 @@ from decimal import Decimal
 from inventory_app.shared.config import IMPORTS_DIR
 
 from inventory_app.shared.db import session_scope
-from inventory_app.ingredients.services import ingredient_service, conversion_service
+from inventory_app.ingredients.services.ingredient_service import IngredientService
+from inventory_app.ingredients.services.conversion_service import IngredientConversionService
 from inventory_app.ingredients.importers import csv_importer
 
 def register_ingredient_commands(subparsers):
@@ -65,9 +66,8 @@ def register_ingredient_commands(subparsers):
 def add_ingredient_command(args):
 
     with session_scope() as session:
-
+        ingredient_service = IngredientService(session)
         ingredient_service.create_by_name(
-            session,
             name=args.name,
             category=args.category,
             subcategory=args.subcategory,
@@ -82,7 +82,8 @@ def list_ingredient_command(args):
 
     with session_scope() as session:
 
-        ingredients = ingredient_service.get_all(session)
+        ingredient_service = IngredientService(session)
+        ingredients = ingredient_service.get_all()
 
         for i in ingredients:
 
@@ -93,8 +94,8 @@ def conversion_command(args):
 
     with session_scope() as session:
 
+        conversion_service = IngredientConversionService(session)
         conversion_service.create_by_name(
-            session,
             ingredient=args.ingredient,
             from_unit=args.from_unit,
             to_unit=args.to_unit,

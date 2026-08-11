@@ -85,7 +85,7 @@ class IngredientSubcategory(Base):
     def __repr__(self):
         return f"<IngredientSubcategory(name='{self.name}')>"
 
-    def __str__(self): # type: ignore
+    def __str__(self):
         return self.name
 
 
@@ -98,7 +98,7 @@ class IngredientUnitConversion(Base):
     ingredient_id: Mapped[int] = mapped_column(ForeignKey("ingredients.id"), nullable=False)
     from_unit_id: Mapped[int] = mapped_column(ForeignKey("units.id"), nullable=False)
     to_unit_id: Mapped[int] = mapped_column(ForeignKey("units.id"), nullable=False)
-    multiplier: Mapped[Decimal] = mapped_column(Numeric(10,2), nullable=False)
+    multiplier: Mapped[Decimal] = mapped_column(Numeric(25,20), nullable=False)
 
 
     ingredient: Mapped["Ingredient"] = relationship()

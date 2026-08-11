@@ -3,10 +3,15 @@ from sqlalchemy.orm import Session
 
 from inventory_app.purchases.models import PurchaseItem
 
+class PurchaseItemRepo:
+    
+    def __init__(self, session: Session):
 
-def create(
-        session: Session,
-        purchase_item: PurchaseItem
-) -> PurchaseItem:
-    session.add(purchase_item)
-    return purchase_item
+        self.session = session
+
+    def create(
+            self,
+            purchase_item: PurchaseItem
+    ) -> PurchaseItem:
+        self.session.add(purchase_item)
+        return purchase_item

@@ -1,7 +1,7 @@
 from decimal import Decimal
 from datetime import datetime, date
 
-from inventory_app.units.services import unit_service
+from inventory_app.units.services.unit_service import UnitService
 from inventory_app.units.models import Unit
 
 DATE_FORMATS = (
@@ -45,7 +45,8 @@ def parse_text(value: str) -> str:
 
 
 def parse_unit(session, value: str) -> Unit:
-    unit = unit_service.get_by_abbv(session, value.strip().lower())
+    unit_service = UnitService(session)
+    unit = unit_service.get_by_abbv(value.strip().lower())
     return unit
 
 

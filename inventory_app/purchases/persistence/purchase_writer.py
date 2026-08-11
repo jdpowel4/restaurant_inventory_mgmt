@@ -5,9 +5,13 @@ from inventory_app.shared.db import session_scope
 from inventory_app.purchases.dto import NormalizedInvoice
 from inventory_app.common.enums import EventType
 from inventory_app.purchases.models import Purchase
-from inventory_app.purchases.services import purchase_service, normalize_service, purchase_item_service
-from inventory_app.vendors.services import vendor_item_service, vendor_service
-from inventory_app.inventory.services import inventory_service
+from inventory_app.purchases.services.purchase_service import PurchaseService
+from inventory_app.purchases.services import normalize_service
+from inventory_app.purchases.services.purchase_item_service import PurchaseItemService
+from inventory_app.purchases.exceptions import DuplicatePurchaseError
+from inventory_app.vendors.services.vendor_item_service import VendorItemService
+from inventory_app.vendors.services.vendor_service import VendorService
+from inventory_app.inventory.services.inventory_service import InventoryService
 
 logger = get_logger(__name__)
 
@@ -16,16 +20,20 @@ def write(data: NormalizedInvoice):
 
     with session_scope() as session:
 
-        vendor = vendor_service.get_or_create(session, data.vendor_name)
+        inventory_service = InventoryService(session)
+        vendor_service = VendorService(session)
+        vendor_item_service = VendorItemService(session)
+        purchase_service = PurchaseService(session)
+        purchase_item_service = PurchaseItemService(session)
 
-        existing = purchase_service.get_by_inv_numb(session, data.invoice_number)
+        vendor = vendor_service.get_or_create(data.vendor_name)
+
+        existing = purchase_service.get_by_inv_numb(data.invoice_number)
 
         if existing:
-            print("Duplicate Invoice Detected - skipping write")
-            return
+            raise DuplicatePurchaseError
 
         purchase = purchase_service.create(
-            session,
             vendor=vendor,
             invoice_number=data.invoice_number,
             invoice_date=data.invoice_date,
@@ -34,7 +42,6 @@ def write(data: NormalizedInvoice):
         session.flush()
 
         event = inventory_service.create_event(
-            session,
             event_type=EventType.PURCHASE,
             reference_type="invoice",
             reference_id=data.invoice_number,
@@ -57,7 +64,6 @@ def write(data: NormalizedInvoice):
             unit = normalize_service.parse_unit(session, line.unit)
 
             vendor_item = vendor_item_service.get_or_create(
-                session,
                 vendor=vendor,
                 vendor_sku=line.vendor_sku,
                 vendor_description=line.description,
@@ -71,7 +77,6 @@ def write(data: NormalizedInvoice):
             vendor_item.most_recent_price = line.unit_price
 
             purchase_item = purchase_item_service.create(
-                session,
                 purchase=purchase,
                 vendor_item=vendor_item,
                 quantity=quantity,
@@ -82,11 +87,11 @@ def write(data: NormalizedInvoice):
             
             if not vendor_item.ingredient:
 
-                vendor_item_service.map(session, vendor_item)
+                vendor_item_service.map(vendor_item)
             
-                inventory_service.recieve_inventory(session, event, purchase_item)
+                inventory_service.recieve_inventory(event, purchase_item)
 
             else:
-                inventory_service.recieve_inventory(session, event, purchase_item)
+                inventory_service.recieve_inventory(event, purchase_item)
 
             

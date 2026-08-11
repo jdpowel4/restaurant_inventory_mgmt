@@ -7,35 +7,40 @@ from inventory_app.shared.logging import get_logger, log_operation
 
 logger = get_logger(__name__)
 
+class UnitCategoryRepo:
 
-def get_by_name(
-        session: Session,
-        name: str
-) -> UnitCategory | None:
-    
-    logger.debug(
-        f"Selecting UnitCategory: '{name}'"
-    )
-    stmt = select(UnitCategory).where(
-        UnitCategory.name == name
-    )
+    def __init__(self, session: Session):
 
-    return session.scalar(stmt)
+        self.session = session
+
+    def get_by_name(
+            self,
+            name: str
+    ) -> UnitCategory | None:
+
+        logger.debug(
+            f"Selecting UnitCategory: '{name}'"
+        )
+        stmt = select(UnitCategory).where(
+            UnitCategory.name == name
+        )
+
+        return self.session.scalar(stmt)
 
 
-@log_operation()
-def create(
-        session: Session,
-        name: str
-) -> UnitCategory:
-    
-    logger.debug(
-        f"Creating Category: '{name}'"
-    )
+    @log_operation()
+    def create(
+            self,
+            name: str
+    ) -> UnitCategory:
 
-    category = UnitCategory(name=name)
+        logger.debug(
+            f"Creating Category: '{name}'"
+        )
 
-    session.add(category)
+        category = UnitCategory(name=name)
 
-    return category
+        self.session.add(category)
+
+        return category
 

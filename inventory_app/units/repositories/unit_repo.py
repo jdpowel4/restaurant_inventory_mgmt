@@ -8,69 +8,75 @@ from inventory_app.shared.logging import get_logger, log_operation, LogLevels
 logger = get_logger(__name__)
 
 
-def get_by_id(
-        session: Session,
-        unit_id: int
+class UnitRepo:
+
+    def __init__(self, session: Session):
+
+        self.session = session
+
+    def get_by_id(
+            self,
+            unit_id: int
+        ) -> Unit | None:
+
+        return self.session.get(Unit, unit_id)
+
+
+    def get_by_name(
+            self,
+            name: str
     ) -> Unit | None:
-    
-    return session.get(Unit, unit_id)
+
+        stmt = select(Unit).where(Unit.name == name)
+
+        return self.session.scalar(stmt)
 
 
-def get_by_name(
-        session: Session,
-        name: str
-) -> Unit | None:
-    
-    stmt = select(Unit).where(Unit.name == name)
+    def get_by_abbreviation(
+            self,
+            abbreviation: str
+    ) -> Unit | None:
 
-    return session.scalar(stmt)
+        stmt = select(Unit).where(Unit.abbreviation == abbreviation)
 
-
-def get_by_abbreviation(
-        session: Session,
-        abbreviation: str
-) -> Unit | None:
-    
-    stmt = select(Unit).where(Unit.abbreviation == abbreviation)
-
-    return session.scalar(stmt)
+        return self.session.scalar(stmt)
 
 
-def get_all(
-        session: Session
-) -> Sequence[Unit]:
-    
-    stmt = select(Unit).order_by(Unit.name)
+    def get_all(
+            self
+    ) -> Sequence[Unit]:
 
-    return list(session.scalars(stmt))
+        stmt = select(Unit).order_by(Unit.name)
 
-
-def create(
-        session: Session,
-        unit: Unit
-) -> Unit:
-    
-    session.add(unit)
-
-    return unit
+        return list(self.session.scalars(stmt))
 
 
-def get_by_name_or_abbv(
-        session: Session,
-        value: str
-) -> Unit | None:
-    stmt = select(Unit).where(
-        or_(
-            Unit.name == value,
-            Unit.abbreviation == value
+    def create(
+            self,
+            unit: Unit
+    ) -> Unit:
+
+        self.session.add(unit)
+
+        return unit
+
+
+    def get_by_name_or_abbv(
+            self,
+            value: str
+    ) -> Unit | None:
+        stmt = select(Unit).where(
+            or_(
+                Unit.name == value,
+                Unit.abbreviation == value
+            )
         )
-    )
-    
-    matches = list(session.scalars(stmt))
 
-    match len(matches):
-        case 0:
-            return
-        case 1:
-            return matches[0]
+        matches = list(self.session.scalars(stmt))
+
+        match len(matches):
+            case 0:
+                return
+            case 1:
+                return matches[0]
         

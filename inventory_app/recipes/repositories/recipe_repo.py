@@ -7,20 +7,55 @@ from inventory_app.items.models import Item
 
 logger = get_logger(__name__)
 
-def get_by_name(
-        session: Session,
-        name: str
-) -> Recipe | None:
-    stmt = (select(Recipe)
-        .join(Recipe.item)
-        .where(Item.name == name))
-    return session.scalar(stmt)
+
+class RecipeRepo:
+
+    def __init__(
+            self,
+            session: Session
+    ):
+        self.session = session
 
 
-def create(
-        session: Session,
-        recipe: Recipe
-) -> Recipe:
+    def get_by_name(
+            self,
+            name: str
+    ) -> Recipe | None:
+        stmt = (select(Recipe)
+            .join(Recipe.item)
+            .where(Item.name == name))
+        return self.session.scalar(stmt)
+
+
+    def create(
+            self,
+            recipe: Recipe
+    ) -> Recipe:
+        self.session.add(recipe)
+        return recipe
     
-    session.add(recipe)
-    return recipe
+    def get(
+        self,
+        recipe: int | str
+    ) -> Recipe:
+        if isinstance(recipe, Recipe):
+            return recipe
+        elif isinstance(recipe, int):
+            stmt = select(Recipe).where(Recipe.id == recipe)
+        elif isinstance(recipe, str):
+            stmt = (
+                select(Recipe)
+                .join(Item)
+                .where(Item.name == recipe)
+            )
+        else:
+            raise TypeError(
+                f"Expected int or str, got {type(recipe).__name__}"
+            )
+        
+        result = self.session.execute(stmt).scalar_one_or_none()
+
+        if result is None:
+            raise LookupError(f"Recipe '{recipe}' not found.")
+
+        return result

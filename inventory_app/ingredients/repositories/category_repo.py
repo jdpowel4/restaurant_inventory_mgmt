@@ -8,36 +8,37 @@ from inventory_app.ingredients.models import IngredientCategory
 
 logger = get_logger(__name__)
 
+class IngredientCategoryRepo:
 
-def get_by_id():
-    pass
+    def __init__(self, session: Session):
+
+        self.session = session
+
+    def get_by_name(
+            self,
+            name: str
+        ) -> IngredientCategory | None:
+
+        stmt = select(IngredientCategory).where(IngredientCategory.name == name)
+
+        return self.session.scalar(stmt)
 
 
-def get_by_name(
-        session: Session,
-        name: str
-    ) -> IngredientCategory | None:
+    def get_all(
+            self
+    ) -> Sequence[IngredientCategory]:
+        stmt = select(IngredientCategory).order_by(IngredientCategory.name)
+        return list(self.session.scalars(stmt))
 
-    stmt = select(IngredientCategory).where(IngredientCategory.name == name)
+    log_operation()
+    def create(
+            self,
+            name: str,
+            sort_order: int
+    ) -> IngredientCategory:
 
-    return session.scalar(stmt)
+        category = IngredientCategory(name=name, sort_order=sort_order)
 
+        self.session.add(category)
 
-def get_all(
-        session: Session
-) -> Sequence[IngredientCategory]:
-    stmt = select(IngredientCategory).order_by(IngredientCategory.name)
-    return list(session.scalars(stmt))
-
-log_operation()
-def create(
-        session: Session,
-        name: str,
-        sort_order: int
-) -> IngredientCategory:
-    
-    category = IngredientCategory(name=name, sort_order=sort_order)
-
-    session.add(category)
-
-    return category
+        return category

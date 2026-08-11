@@ -2,27 +2,34 @@ from sqlalchemy.orm import Session
 
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
 from inventory_app.inventory.models import InventoryLocation
-from inventory_app.inventory.repositories import location_repo
+from inventory_app.inventory.repositories.location_repo import InventoryLocationRepo
 
 logger = get_logger(__name__)
 
-def get_or_create(
-        session: Session,
-        name: str
-) -> InventoryLocation:
-    
-    existing = location_repo.get_by_name(session, name)
 
-    if existing is not None:
-        return existing
+class InventoryLocationService:
 
-    location = InventoryLocation(name=name)
-    
-    return location_repo.create(session, location)
+    def __init__(self, session: Session):
+
+        self.location_repo = InventoryLocationRepo(session)
+
+    def get_or_create(
+            self,
+            name: str
+    ) -> InventoryLocation:
+
+        existing = self.location_repo.get_by_name(name)
+
+        if existing is not None:
+            return existing
+
+        location = InventoryLocation(name=name)
+
+        return self.location_repo.create(location)
 
 
-def get_by_name(
-        session: Session,
-        name: str
-) -> InventoryLocation | None:
-    return location_repo.get_by_name(session, name)
+    def get_by_name(
+            self,
+            name: str
+    ) -> InventoryLocation | None:
+        return self.location_repo.get_by_name(name)

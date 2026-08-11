@@ -15,6 +15,10 @@ def register_invoice_commands(subparsers):
     import_parser.add_argument("file")
     import_parser.set_defaults(func=import_purchase_command)
 
+    import_all_parser = invoice_sub.add_parser("import-directory")
+    import_all_parser.set_defaults(func=import_directory_command)
+
+
 
 def import_purchase_command(args):
 
@@ -26,3 +30,11 @@ def import_purchase_command(args):
     invoice_number = import_service.import_purchase(file)
 
     print(f"Successfully imported invoice {invoice_number}")
+
+
+def import_directory_command(args):
+
+    imported, failed = import_service.import_directory(INVOICE_DIR)
+
+    print(f"Imported {imported}")
+    print(f"Failed {failed}")

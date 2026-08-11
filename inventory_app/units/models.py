@@ -33,7 +33,7 @@ class Unit(Base):
     name: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     abbreviation: Mapped[str | None] = mapped_column(String, nullable=True)
     category_id: Mapped[int] = mapped_column(ForeignKey("unit_categories.id"))
-    factor: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
+    factor: Mapped[Decimal] = mapped_column(Numeric(25,20), nullable=False)
     allow_global_conversions: Mapped[bool] = mapped_column(Boolean, default=True)
     
 

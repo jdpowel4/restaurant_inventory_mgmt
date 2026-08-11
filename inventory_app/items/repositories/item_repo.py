@@ -6,21 +6,26 @@ from inventory_app.items.models import *
 
 logger = get_logger(__name__)
 
-def create(
-        session: Session,
-        item: Item
-) -> Item:
-    
-    logger.debug(
-        f"Creating Item: {item.name}"
-    )
-    session.add(item)
-    return item
-    
+class ItemRepo:
 
-def get_by_name(
-        session: Session,
-        name: str
-) -> Item | None:
-    stmt = select(Item).where(Item.name == name)
-    return session.scalar(stmt)
+    def __init__(self, session: Session):
+        self.session = session
+
+    def create(
+            self,
+            item: Item
+    ) -> Item:
+
+        logger.debug(
+            f"Creating Item: {item.name}"
+        )
+        self.session.add(item)
+        return item
+
+
+    def get_by_name(
+            self,
+            name: str
+    ) -> Item | None:
+        stmt = select(Item).where(Item.name == name)
+        return self.session.scalar(stmt)

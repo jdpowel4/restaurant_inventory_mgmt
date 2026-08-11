@@ -20,10 +20,10 @@ class Recipe(Base, TimestampMixin):
     id: Mapped[int] = mapped_column(primary_key=True)
     item_id: Mapped[int] = mapped_column(ForeignKey("items.id"), unique=True)
 
-    yield_qty: Mapped[Decimal] = mapped_column(Numeric(10, 2))
-    yeild_unit_id: Mapped[int] = mapped_column(ForeignKey("units.id"))
+    yield_qty: Mapped[Decimal] = mapped_column(Numeric(18, 6))
+    yield_unit_id: Mapped[int] = mapped_column(ForeignKey("units.id"))
 
-    serving_qty: Mapped[Decimal] = mapped_column(Numeric(10, 2))
+    serving_qty: Mapped[Decimal] = mapped_column(Numeric(18, 6))
     serving_unit_id: Mapped[int] = mapped_column(ForeignKey("units.id"))
 
     locked: Mapped[Boolean] = mapped_column(Boolean, default=False)
@@ -32,7 +32,7 @@ class Recipe(Base, TimestampMixin):
 
 
     item: Mapped["Item"] = relationship(back_populates="recipe")
-    yeild_unit: Mapped["Unit"] = relationship(foreign_keys=[yeild_unit_id])
+    yield_unit: Mapped["Unit"] = relationship(foreign_keys=[yield_unit_id])
     serving_unit: Mapped["Unit"] = relationship(foreign_keys=[serving_unit_id])
     components: Mapped[list["RecipeComponent"]] = relationship(back_populates="recipe", cascade="all, delete-orphan", uselist=True)
 
@@ -50,7 +50,7 @@ class RecipeComponent(Base):
     recipe_id: Mapped[int] = mapped_column(ForeignKey("recipes.id"))
     item_id: Mapped[int] = mapped_column(ForeignKey("items.id"))
 
-    quantity: Mapped[Decimal] = mapped_column(Numeric(10, 2))
+    quantity: Mapped[Decimal] = mapped_column(Numeric(18, 6))
 
     unit_id: Mapped[int] = mapped_column(ForeignKey("units.id"))
 
@@ -69,6 +69,6 @@ class RecipeProduction(Base, TimestampMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     recipe_id: Mapped[int] = mapped_column(ForeignKey("recipes.id"))
-    quantity_produced: Mapped[Decimal] = mapped_column(Numeric(10, 2))
+    quantity_produced: Mapped[Decimal] = mapped_column(Numeric(18, 6))
 
     recipe: Mapped["Recipe"] = relationship()

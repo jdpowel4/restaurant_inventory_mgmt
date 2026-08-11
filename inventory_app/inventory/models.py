@@ -43,10 +43,10 @@ class InventoryLot(Base, TimestampMixin):
     purchase_item_id: Mapped[int] = mapped_column(ForeignKey("purchase_items.id"))
     location_id: Mapped[int | None] = mapped_column(ForeignKey("inventory_locations.id"), nullable=True)
 
-    original_qty: Mapped[Decimal] = mapped_column(Numeric(10, 4), nullable=False)
-    remaining_qty: Mapped[Decimal] = mapped_column(Numeric(10, 4), nullable=False)
+    original_qty: Mapped[Decimal] = mapped_column(Numeric(18, 6), nullable=False)
+    remaining_qty: Mapped[Decimal] = mapped_column(Numeric(18, 6), nullable=False)
 
-    base_unit_cost: Mapped[Decimal] = mapped_column(Numeric(10, 4), nullable=False)
+    base_unit_cost: Mapped[Decimal] = mapped_column(Numeric(25, 20), nullable=False)
 
 
     __table_args__ = (
@@ -72,7 +72,7 @@ class InventoryTransaction(Base, TimestampMixin):
 
     transaction_type: Mapped[str] = mapped_column(String, nullable=False)
 
-    qty_change: Mapped[Decimal] = mapped_column(Numeric(10, 4), nullable=False)
+    qty_change: Mapped[Decimal] = mapped_column(Numeric(18, 6), nullable=False)
 
 
     __table_args__ = (

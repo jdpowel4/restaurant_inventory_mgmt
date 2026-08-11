@@ -9,51 +9,50 @@ from inventory_app.items.models import Item
 logger = get_logger(__name__)
 
 
-def get_by_id():
-    pass
+class IngredientRepo:
 
+    def __init__(self, session: Session):
 
-def get_by_name(
-        session: Session,
-        name: str
-) -> Ingredient | None:
-    
-    stmt = select(Ingredient).join(Ingredient.item).where(Item.name.ilike(name))
+        self.session = session
 
-    return session.scalar(stmt)
+    def get_by_id(self):
+        pass
 
+    def get_by_name(
+            self,
+            name: str
+    ) -> Ingredient | None:
 
+        stmt = select(Ingredient).join(Ingredient.item).where(Item.name.ilike(name))
 
-def get_all(
-        session: Session
-) -> Sequence[Ingredient]:
-    stmt = (select(Ingredient)
-    .join(Ingredient.item)
-    .order_by(Item.name))
-    return list(session.scalars(stmt))
+        return self.session.scalar(stmt)
 
+    def get_all(
+            self
+    ) -> Sequence[Ingredient]:
+        stmt = (select(Ingredient)
+        .join(Ingredient.item)
+        .order_by(Item.name))
+        return list(self.session.scalars(stmt))
 
-def get_by_category():
-    pass
+    def get_by_category(self):
+        pass
 
+    def search(self):
+        pass
 
-def search():
-    pass
+    def create(
+            self,
+            ingredient: Ingredient
+    ) -> Ingredient:
 
+        logger.debug(
+            f"Creating Ingredient {ingredient.item}"
+        )
+        self.session.add(ingredient)
 
-def create(
-        session: Session,
-        ingredient: Ingredient
-) -> Ingredient:
-    
-    logger.debug(
-        f"Creating Ingredient {ingredient.item}"
-    )
-    session.add(ingredient)
+        return ingredient
 
-    return ingredient
-
-
-def delete():
-    pass
+    def delete(self):
+        pass
 

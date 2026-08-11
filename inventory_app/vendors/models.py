@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     from inventory_app.units.models import Unit
     from inventory_app.ingredients.models import Ingredient
 
-from sqlalchemy import String, ForeignKey, Numeric, Enum
+from sqlalchemy import String, ForeignKey, Numeric, Enum, CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from decimal import Decimal
 
@@ -47,13 +47,20 @@ class VendorItem(Base, TimestampMixin):
     vendor_sku: Mapped[str] = mapped_column(String)
     vendor_description: Mapped[str] = mapped_column(String)
 
-    pack_size: Mapped[Decimal] = mapped_column(Numeric(10, 2))
+    pack_size: Mapped[Decimal] = mapped_column(Numeric(18, 6))
     pack_unit_id: Mapped[int] = mapped_column(ForeignKey("units.id"))
 
-    usable_factor: Mapped[Decimal] = mapped_column(Numeric(10,2), default=1.00)
+    usable_factor: Mapped[Decimal] = mapped_column(Numeric(21,20), default=1.00)
     
-    most_recent_price: Mapped[Decimal] = mapped_column(Numeric(10,2), nullable=False)
-
+    most_recent_price: Mapped[Decimal] = mapped_column(Numeric(15,10), nullable=False)
+    
+    __table_args__ = (
+        CheckConstraint(
+            "usable_factor > 0 AND usable_factor <= 1",
+            name = "ck_vendor_items_usable_factor_range"
+        ),
+    )
+    
 
     ingredient: Mapped["Ingredient"] = relationship(back_populates="vendor_items")
     pack_unit: Mapped["Unit"] = relationship()
@@ -74,7 +81,7 @@ class VendorItemConversion(Base):
     vendor_item_id: Mapped[int] = mapped_column(ForeignKey("vendor_items.id"))
     from_unit_id: Mapped[int] = mapped_column(ForeignKey("units.id"))
     to_unit_id: Mapped[int] = mapped_column(ForeignKey("units.id"))
-    multiplier: Mapped[Decimal] = mapped_column(Numeric(10, 4), nullable=False)
+    multiplier: Mapped[Decimal] = mapped_column(Numeric(18, 6), nullable=False)
     source: Mapped[ConversionSource] = mapped_column(
         Enum(
             ConversionSource,

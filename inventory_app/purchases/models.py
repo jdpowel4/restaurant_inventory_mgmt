@@ -42,9 +42,9 @@ class PurchaseItem(Base, TimestampMixin):
     id: Mapped[int] = mapped_column(primary_key=True)
     purchase_id: Mapped[int] = mapped_column(ForeignKey("purchases.id"))
     vendor_item_id: Mapped[int] = mapped_column(ForeignKey("vendor_items.id"))
-    quantity: Mapped[Decimal] = mapped_column(Numeric(10,2), nullable=False)
-    case_cost: Mapped[Decimal] = mapped_column(Numeric(10,2), nullable=False)
-    extended_cost: Mapped[Decimal] = mapped_column(Numeric(10,2), nullable=False)
+    quantity: Mapped[Decimal] = mapped_column(Numeric(18,6), nullable=False)
+    case_cost: Mapped[Decimal] = mapped_column(Numeric(12,2), nullable=False)
+    extended_cost: Mapped[Decimal] = mapped_column(Numeric(18,8), nullable=False)
 
 
     purchase: Mapped["Purchase"] = relationship(back_populates="items")

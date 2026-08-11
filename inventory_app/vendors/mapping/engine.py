@@ -17,9 +17,8 @@ def map(
     matches = MapperMatcher.find(session, item.vendor_description)
 
     if not matches:
-            print("No Possible Matches Found!")
-            return item
-     
+        print("No Possible Matches Found!")
+   
 
     selection = interactive.choose_ingredients(matches)
     
