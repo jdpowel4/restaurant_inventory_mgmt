@@ -3,6 +3,8 @@ from decimal import Decimal
 
 from inventory_app.common.conversions.dto import ConversionEdge, ConversionPath
 from inventory_app.common.conversions.exceptions import MissingConversionError
+from inventory_app.ingredients.models import Ingredient
+from inventory_app.vendors.models import VendorItem
 
 
 
@@ -58,7 +60,9 @@ class ConversionGraph:
     def find_path(
         self,
         from_unit,
-        to_unit
+        to_unit,
+        ingredient: Ingredient | None = None,
+        vendor_item: VendorItem | None = None
     ):
         start = from_unit.id
         end = to_unit.id
@@ -108,5 +112,5 @@ class ConversionGraph:
                 )
         
         raise MissingConversionError(
-            f"No conversion path from {from_unit} to {to_unit}"
+            f"No conversion path from {from_unit} to {to_unit} : {vendor_item} {ingredient}"
         )

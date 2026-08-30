@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from typing import Sequence
 
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
 from inventory_app.items.models import *
@@ -29,3 +30,13 @@ class ItemRepo:
     ) -> Item | None:
         stmt = select(Item).where(Item.name == name)
         return self.session.scalar(stmt)
+    
+    def get(
+            self,
+            id: int
+    ) -> Item | None:
+        return self.session.get(Item, id)
+
+    def list(self) -> Sequence[Item]:
+        stmt = select(Item).order_by(Item.name)
+        return list(self.session.scalars(stmt))

@@ -6,15 +6,12 @@ from inventory_app.business.dto import BusinessInfo
 
 class BusinessProvider:
 
-    def __init__(
-            self,
-            service: BusinessService
-    ):
+    def __init__(self, service: BusinessService):
         self._business: BusinessInfo | None = None
-        self._service = service
+        self.service = service
 
     def load(self) -> None:
-        self._business = self._service.get_business()
+        self._business = self.service.get_business()
 
     @property
     def business(self) -> BusinessInfo:
@@ -23,4 +20,4 @@ class BusinessProvider:
         return self._business
     
     def refresh(self) -> None:
-        self._business = self._service.get_business()
+        self._business = self.service.get_business()

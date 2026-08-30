@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from typing import Sequence
 
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
 from inventory_app.items.exceptions import ItemError, UnknownItemError
@@ -27,7 +28,6 @@ class ItemService:
 
         return self.item_repo.create(item)
 
-
     def get_by_name(
             self,
             name: str
@@ -36,3 +36,15 @@ class ItemService:
         if i is None:
             raise UnknownItemError(f"Item '{name}' not found.")
         return i
+    
+    def get(
+            self,
+            id: int
+    ) -> Item:
+        i = self.item_repo.get(id)
+        if i is None:
+            raise UnknownItemError(f"Item '{id}' not found.")
+        return i
+    
+    def list(self) -> Sequence[Item]:
+        return self.item_repo.list()

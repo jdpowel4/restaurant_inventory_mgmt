@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from typing import Sequence
 
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
 from inventory_app.inventory.models import InventoryLocation
@@ -33,3 +34,6 @@ class InventoryLocationService:
             name: str
     ) -> InventoryLocation | None:
         return self.location_repo.get_by_name(name)
+    
+    def get_all(self) -> Sequence[InventoryLocation]:
+        return self.location_repo.get_all()

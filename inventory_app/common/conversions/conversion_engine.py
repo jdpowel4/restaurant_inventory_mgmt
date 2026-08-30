@@ -3,6 +3,7 @@ from decimal import Decimal
 
 from inventory_app.common.conversions.exceptions import MissingConversionError
 from inventory_app.units.models import Unit
+from inventory_app.units.services.unit_service import UnitService
 from inventory_app.ingredients.models import Ingredient
 from inventory_app.vendors.models import VendorItem
 from inventory_app.common.conversions.graph_builder import GraphBuilder
@@ -20,12 +21,19 @@ class ConversionEngine:
     def convert(
         self,
         quantity: Decimal,
-        from_unit: Unit,
-        to_unit: Unit,
+        from_unit: Unit | int,
+        to_unit: Unit | int,
         ingredient: Ingredient | None,
         vendor_item: VendorItem | None,
     ) -> Decimal:    
         
+        if isinstance(from_unit, int):
+            service = UnitService(self.session)
+            from_unit = service.get(from_unit)
+        if isinstance(to_unit, int):
+            service = UnitService(self.session)
+            to_unit = service.get(to_unit)
+
         graph = GraphBuilder.build(
             self.session,
             ingredient,
@@ -48,7 +56,9 @@ class ConversionEngine:
         '''
         path = graph.find_path(
             from_unit,
-            to_unit
+            to_unit,
+            ingredient,
+            vendor_item
         )
 
         return quantity * path.multiplier

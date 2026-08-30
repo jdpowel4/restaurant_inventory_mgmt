@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# NEEDS FIXING, Need to revise to allow a better file structure and directory creation on production ready product
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -13,6 +14,8 @@ INSTANCE_DIR = PROJECT_ROOT / "instance"
 DATABASE_PATH = INSTANCE_DIR / "inventory.db"
 
 IMPORTS_DIR = INSTANCE_DIR / "imports"
+
+ASSET_DIR = IMPORTS_DIR / "assets"
 
 INVOICE_DIR = IMPORTS_DIR / "invoices"
 

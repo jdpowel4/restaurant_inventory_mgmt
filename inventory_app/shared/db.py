@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker, Session
 from contextlib import contextmanager
 
 from inventory_app.shared.config import DATABASE_URL
+from inventory_app.models import *
 
 engine = create_engine(DATABASE_URL)
 

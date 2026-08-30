@@ -1,4 +1,5 @@
-from inventory_app.cli.main import main
+from inventory_app.gui.main import main
+#from inventory_app.cli.main import main
 from inventory_app.shared.logging import setup_logging
 
 

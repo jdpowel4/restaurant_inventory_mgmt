@@ -79,3 +79,12 @@ class UnitService:
         if unit is None:
             raise UnknownUnitError(value)
         return unit
+    
+    def get(
+            self,
+            id: int
+    ) -> Unit:
+        unit = self.unit_repo.get_by_id(id)
+        if unit is None:
+            raise UnknownUnitError(id)
+        return unit

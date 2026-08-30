@@ -53,3 +53,9 @@ class IngredientSubcategoryService:
             category: str
     ) -> Sequence[IngredientSubcategory]:
         return self.subcategory_repo.get_by_category_name(category)
+
+    
+    def get_all(
+            self
+    ) -> Sequence[IngredientSubcategory]:
+        return self.subcategory_repo.get_all()

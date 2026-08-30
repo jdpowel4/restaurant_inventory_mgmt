@@ -5,6 +5,7 @@ from typing import Optional, Sequence
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
 from inventory_app.ingredients.exceptions import IngredientError, DuplicateIngredientError, UnknownIngredientError
 from inventory_app.common.enums import ItemType
+from inventory_app.ingredients.dto import IngredientUpdate
 from inventory_app.ingredients.repositories.ingredient_repo import IngredientRepo
 from inventory_app.ingredients.models import *
 from inventory_app.ingredients.services.category_service import IngredientCategoryService
@@ -211,3 +212,29 @@ class IngredientService:
             return name
         else:
             return self.unit_service.get_by_name_or_abbv(name)
+        
+    def get(
+            self,
+            ingredient_id: int
+    ) -> Ingredient | None:
+        return self.ingredient_repo.get(ingredient_id)
+
+    def update(
+            self,
+            ingredient_id: int,
+            data: IngredientUpdate
+    ):
+        
+        ingredient = self.ingredient_repo.get(ingredient_id)
+
+        if ingredient is None:
+            raise UnknownIngredientError(
+                f"Ingredient {ingredient_id} does not exist"
+            )
+
+        ingredient.item.name = data.name
+        ingredient.category_id = data.category_id
+        ingredient.subcategory_id = data.subcategory_id
+        ingredient.base_unit_id = data.base_unit_id
+        ingredient.count_unit_id = data.count_unit_id
+        ingredient.purchase_unit_id = data.purchase_unit_id

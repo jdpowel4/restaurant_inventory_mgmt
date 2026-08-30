@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from typing import Sequence
 
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
 from inventory_app.recipes.models import Recipe
@@ -59,3 +60,7 @@ class RecipeRepo:
             raise LookupError(f"Recipe '{recipe}' not found.")
 
         return result
+    
+    def get_all(self) -> Sequence[Recipe]:
+        stmt = select(Recipe).join(Recipe.item).order_by(Item.name)
+        return list(self.session.scalars(stmt))

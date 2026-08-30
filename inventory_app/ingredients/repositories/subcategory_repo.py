@@ -42,3 +42,7 @@ class IngredientSubcategoryRepo:
             .where(IngredientCategory.name==category)
         )
         return list(self.session.scalars(stmt))
+    
+    def get_all(self) -> Sequence[IngredientSubcategory]:
+        stmt = select(IngredientSubcategory).order_by(IngredientSubcategory.name)
+        return list(self.session.scalars(stmt))

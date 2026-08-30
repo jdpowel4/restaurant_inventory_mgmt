@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from typing import Sequence
 
 from inventory_app.shared.logging import get_logger, LogLevels
 from inventory_app.inventory.models import InventoryLocation
@@ -29,3 +30,7 @@ class InventoryLocationRepo:
             self.session.add(location)
 
             return location
+        
+        def get_all(self) -> Sequence[InventoryLocation]:
+             stmt = select(InventoryLocation).order_by(InventoryLocation.name)
+             return list(self.session.scalars(stmt))

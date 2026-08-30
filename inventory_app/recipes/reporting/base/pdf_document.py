@@ -3,6 +3,7 @@ from datetime import date, datetime
 from typing import List
 
 from inventory_app.shared.db import session_scope
+from inventory_app.shared.config import ASSET_DIR
 from inventory_app.business.providers.business_provider import BusinessProvider
 from inventory_app.business.services.business_service import BusinessService
 from inventory_app.recipes.reporting.styles.main import Styles_Main
@@ -24,11 +25,11 @@ class BasePDF(FPDF):
 
         with session_scope() as session:
             
-            business_service = BusinessService(session)
-            provider = BusinessProvider(business_service)
-            provider.load()
+            provider = BusinessProvider()
+            provider.load(session)
 
             self._business = provider.business
+            self.logo_path = ASSET_DIR / self._business.logo_path
             
             
 
@@ -49,7 +50,7 @@ class BasePDF(FPDF):
         self.line(.5, .25, 8, .25)
         self.ln(.05)
         self.line(.5, .3, 8, .3)
-        self.image(self._business.logo_path, .25, .15, 1.25)
+        self.image(self.logo_path, .25, .15, 1.25)
         self.set_y(.475)
         self.set_font(*Styles_Main.TITLE_FONT)
         self.set_x(1.35)

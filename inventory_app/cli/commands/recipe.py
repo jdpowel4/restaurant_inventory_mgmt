@@ -61,10 +61,12 @@ def add_recipe_command(args):
 def add_component_command(args):
 
     with session_scope() as session:
+        recipe_service = RecipeService(session)
+        recipe = recipe_service.get_by_name(args.recipe)
 
         component_service = RecipeComponentService(session)
         component_service.create_by_name(
-            recipe=args.recipe,
+            recipe=recipe,
             item=args.item,
             quantity=Decimal(args.quantity),
             unit=args.unit
@@ -77,8 +79,11 @@ def cost_recipe_command(args):
 
         engine = CostingEngine(session)
         interface = RecipeInterface()
+        service = RecipeService(session)
 
-        report = engine.cost_recipe(args.recipe)
+        recipe = service.get_by_name(args.recipe)
+
+        report = engine.cost_recipe(recipe)
 
         interface.print_recipe_report(report)
 

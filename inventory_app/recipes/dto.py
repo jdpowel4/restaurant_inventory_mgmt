@@ -16,7 +16,7 @@ class ComponentCostLine:
 
 @dataclass
 class RecipeCostReport:
-    recipe_id: int
+    recipe_id: int | None
     recipe_name: str
     total_cost: Decimal
     yield_qty: Decimal
@@ -36,3 +36,22 @@ class ReportMetadata:
     created: datetime
     company_name: str
     filename: str
+
+@dataclass
+class RecipeComponentInput:
+    id: int | None
+    quantity: Decimal
+    unit_id: int
+    item_id: int
+    pre_instructions: str = ""
+    post_instructions: str = ""
+
+@dataclass
+class RecipeInput:
+    recipe_id: int | None
+    recipe_name: str
+    yield_qty: Decimal
+    yield_unit_id: int
+    serving_qty: Decimal
+    serving_unit_id: int
+    components: List[RecipeComponentInput]

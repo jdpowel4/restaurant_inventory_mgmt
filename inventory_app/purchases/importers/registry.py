@@ -5,6 +5,7 @@ from inventory_app.purchases.exceptions import UnknownFileTypeError, UnknownVend
 from inventory_app.purchases.importers.csv_reader import CSVReader
 from inventory_app.purchases.importers.usfoods import USFoodsImporter
 from inventory_app.purchases.importers.pfs import PFSImporter
+from inventory_app.purchases.importers.westwater import WestwaterHams
 
 class ReaderFactory:
 
@@ -45,5 +46,13 @@ class ImporterFactory:
         }.issubset(headers):
             
             return PFSImporter()
+        
+        if {
+            "invoice_number",
+            "date",
+            "total"
+        }.issubset(headers):
+            
+            return WestwaterHams()
         
         raise UnknownVendorError()

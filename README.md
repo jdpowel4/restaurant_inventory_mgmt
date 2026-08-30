@@ -16,34 +16,23 @@ The project is currently under active development.
 
 Completed or mostly complete modules include:
 
-- Units & Unit Categories
-- Ingredients
-- Ingredient Categories/Subcategories
-- Ingredient Unit Conversions
-- Vendors
-- Vendor Items
-- Purchases
-- Inventory Lots
-- Inventory Transactions
-- Inventory Events
-- Recipe foundation
-- CSV Import framework
-- Domain architecture
-- SQLAlchemy 2.x models
-- Alembic migrations
-- Logging system
-- Bootstrap/seed system
-
-Upcoming work includes:
-
-- Recipe production
-- Inventory adjustments
-- Inventory counts
-- Reporting
-- Food cost analysis
-- Waste tracking
-- Desktop UI
-- POS Integration
+- SQLite Database using SQLAlchemy and Alembic for database migrations
+    - **Business**
+        - Single Row Table with all business specific information
+    - **Ingredients**
+        - Ingredients
+        - Ingredient Categories
+        - Ingredient Subcategories
+        - Ingredient Unit Conversions
+    - **Inventory**
+        - Inventory Events
+        - Inventory Transactions
+        - Inventory Lots
+        - Inventory Locations
+    - **Items**
+        - Contains all ingredients and recipe names, and links to ingredient and recipe tables
+    - **Purchases**
+        - 
 
 ---
 

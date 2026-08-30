@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Sequence
 
 from inventory_app.shared.logging import get_logger, log_operation, LogLevels
+from inventory_app.ingredients.exceptions import UnknownIngredientError
 from inventory_app.ingredients.models import Ingredient
 from inventory_app.items.models import Item
 
@@ -15,8 +16,12 @@ class IngredientRepo:
 
         self.session = session
 
-    def get_by_id(self):
-        pass
+    def get(
+            self,
+            ingredient_id: int
+        ) -> Ingredient | None:
+
+        return self.session.get(Ingredient, ingredient_id) 
 
     def get_by_name(
             self,
