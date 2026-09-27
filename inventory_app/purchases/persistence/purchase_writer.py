@@ -1,4 +1,5 @@
 from decimal import Decimal
+from sqlalchemy.orm import Session
 
 from inventory_app.shared.logging import get_logger, LogLevels, log_operation
 from inventory_app.shared.db import session_scope
@@ -15,6 +16,24 @@ from inventory_app.inventory.services.inventory_service import InventoryService
 
 logger = get_logger(__name__)
 
+class PurchaseWriter:
+
+    def __init__(self, session: Session):
+        self.inventory_service = InventoryService(session)
+        self.vendor_service = VendorService(session)
+        self.vendor_item_service = VendorItemService(session)
+        self.purchase_service = PurchaseService(session)
+        self.purchase_item_service = PurchaseItemService(session)
+
+    def gui_purchase(self, data):
+        vendor = self.vendor_service.get(data.vendor_id)
+        return self.purchase_service.create(vendor, data.inv_numb, data.inv_date, data.total)
+
+    def gui_write(self, data):
+        pass
+        
+
+    
 @log_operation
 def write(data: NormalizedInvoice):
 
@@ -94,4 +113,3 @@ def write(data: NormalizedInvoice):
             else:
                 inventory_service.recieve_inventory(event, purchase_item)
 
-            

@@ -68,20 +68,31 @@ class RecipeService:
             self,
             name: str,
             yield_qty: Decimal,
-            yield_unit: str,
+            yield_unit: str | int,
             serving_qty: Decimal,
-            serving_unit: str
+            serving_unit: str | int
     ) -> Recipe:
 
         existing = self.recipe_repo.get_by_name(name)
 
         if existing is not None:
-            raise DuplicateRecipeError(f"Recipe '{name}' already exist.")
+            return existing
 
         item = self.item_service.create(name, ItemType.RECIPE)
 
-        yield_u = self.unit_service.get_by_name(yield_unit)
-        serving_u = self.unit_service.get_by_name(serving_unit)
+        if isinstance(yield_unit, int):
+            yield_u = self.unit_service.get(yield_unit)
+        elif isinstance(yield_unit, str):
+            yield_u = self.unit_service.get_by_name(yield_unit)
+        else:
+            raise 
+        if isinstance(serving_unit, int):
+            serving_u = self.unit_service.get(serving_unit)
+        elif isinstance(serving_unit, str):
+            serving_u = self.unit_service.get_by_name(serving_unit)
+        else:
+            raise
+
 
         recipe = Recipe(
             item=item,
@@ -135,12 +146,15 @@ class RecipeService:
     def get_all(self):
         return self.recipe_repo.get_all()
     
-    def update(
+    def update_or_save(
             self,
-            recipe_id: int,
+            recipe_id: int | None,
             data: RecipeInput
     ):
-        recipe = self.recipe_repo.get(recipe_id)
+        if recipe_id is None:
+            recipe = self.create_by_name(name=data.recipe_name, yield_qty=data.yield_qty, yield_unit=data.yield_unit_id, serving_qty=data.serving_qty, serving_unit=data.serving_unit_id)
+        else:
+            recipe = self.recipe_repo.get(recipe_id)
         self._update_recipe(recipe, data)
         self._update_components(recipe, data.components)
         

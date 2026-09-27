@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from typing import Sequence
 
 from inventory_app.vendors.models import Vendor
 
@@ -22,3 +23,10 @@ class VendorRepo:
         ) -> Vendor:
             self.session.add(vendor)
             return vendor
+
+        def get_all(self) -> Sequence:
+             stmt = select(Vendor).order_by(Vendor.name)
+             return list(self.session.scalars(stmt))
+
+        def get(self, id: int):
+             return self.session.get(Vendor, id)

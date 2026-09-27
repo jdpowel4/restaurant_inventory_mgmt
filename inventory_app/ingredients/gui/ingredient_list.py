@@ -20,8 +20,8 @@ from inventory_app.ingredients.gui.ingredient_editor import IngredientEditor
 
 class IngredientPage(QWidget):
 
-    def __init__(self, context: AppContext):
-        super().__init__()
+    def __init__(self, context: AppContext, parent=None):
+        super().__init__(parent)
 
         self.context = context
 

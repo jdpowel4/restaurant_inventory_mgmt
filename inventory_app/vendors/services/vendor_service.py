@@ -25,3 +25,9 @@ class VendorService:
         )
         vendor = Vendor(name=name)
         return self.vendor_repo.create(vendor)
+
+    def get_all(self):
+        return self.vendor_repo.get_all()
+
+    def get(self, id: int):
+        return self.vendor_repo.get(id)

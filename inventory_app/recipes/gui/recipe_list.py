@@ -66,9 +66,12 @@ class RecipePage(QWidget):
         self.recipe_list.itemDoubleClicked.connect(
             self._recipe_double_clicked
         )
-        
+
+        self._connect_signals()
         self._load_recipes()
 
+    def _connect_signals(self):
+        self.add_button.clicked.connect(self._add_new)
     def _load_recipes(self):
 
         with self.context.session_factory() as session:
@@ -130,6 +133,12 @@ class RecipePage(QWidget):
             context=self.context,
             recipe_id=recipe_id
         )
+
+        if editor.exec() == QDialog.DialogCode.Accepted:
+            self._load_recipes()
+
+    def _add_new(self):
+        editor = RecipeEditor(self.context, None)
 
         if editor.exec() == QDialog.DialogCode.Accepted:
             self._load_recipes()

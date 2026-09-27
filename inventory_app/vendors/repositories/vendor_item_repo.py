@@ -2,6 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from inventory_app.vendors.models import Vendor, VendorItem
+from inventory_app.vendors.exceptions import MissingVendorItemError
 
 class VendorItemRepo:
 
@@ -21,10 +22,13 @@ class VendorItemRepo:
                 self,
                 vendor: Vendor,
                 sku: str
-        ) -> VendorItem | None:
-            item = select(VendorItem).where(
+        ) -> VendorItem:
+            stmt = select(VendorItem).where(
                 VendorItem.vendor_sku==sku,
                 VendorItem.vendor == vendor
-        )
-            return self.session.scalar(item)
+            )
+            item = self.session.scalar(stmt)
+            if item is None:
+                raise MissingVendorItemError
+            return item
 

@@ -153,6 +153,8 @@ class RecipeComponentTable(QWidget):
 
     def load_components(self, components: list[RecipeComponent]):
         self.table.setRowCount(0)
+        if not components:
+            self._add_empty_row()
         for component in components:
             row = self.table.rowCount()
             

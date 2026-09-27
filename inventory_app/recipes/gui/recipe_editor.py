@@ -26,7 +26,6 @@ class RecipeEditor(QDialog):
 
         self.context = context
         self.recipe_id = recipe_id
-        self.recipe = None
 
         self._build_ui()
         self._load_recipe()
@@ -56,9 +55,9 @@ class RecipeEditor(QDialog):
         if self.recipe_id is not None: 
             with self.context.session_factory() as session:
                 self.recipe_service = RecipeService(session)
-                self.recipe = self.recipe_service.get(self.recipe_id)
-                self._populate_recipe_info(self.recipe)
-                self.recipe_tab.load_recipe(self.recipe)  
+                recipe = self.recipe_service.get(self.recipe_id)
+                self._populate_recipe_info(recipe)
+                self.recipe_tab.load_recipe(recipe)  
 
     def _connect_signals(self):
         
@@ -168,20 +167,34 @@ class RecipeEditor(QDialog):
     
     def _save(self):
         if self.recipe_id is None:
-            raise
+            self._save_new()
+        if self.recipe_id is not None:
+            component_data = self.recipe_tab.get_components()
+            recipe_data = self._get_recipe_data(component_data)
+            if component_data is None:
+                return
+            if recipe_data is None:
+                return
+
+            with self.context.session_factory() as session:
+                recipe_service = RecipeService(session)
+                recipe_service.update_or_save(
+                    recipe_id = self.recipe_id,
+                    data = recipe_data
+                )
+                session.commit()
+
+    def _save_new(self):
         component_data = self.recipe_tab.get_components()
         recipe_data = self._get_recipe_data(component_data)
         if component_data is None:
             return
         if recipe_data is None:
             return
-
+        
         with self.context.session_factory() as session:
             recipe_service = RecipeService(session)
-            recipe_service.update(
-                recipe_id = self.recipe_id,
-                data = recipe_data
-            )
+            recipe_service.update_or_save(recipe_id=None, data=recipe_data)
             session.commit()
     
     def _tab_changed(self, index: int):
@@ -271,7 +284,7 @@ class RecipeEditor(QDialog):
     def _on_portion_percent_change(self):
         percent = self.costing_tab.get_portion_percent()
         cost = Decimal(self.portion_price_label.text().lstrip("$"))
-        price = ((percent / 100) * cost)
+        price = (cost / (percent / 100))
         self.costing_tab.set_portion_price(price)
         margin = (price - cost)
         self.costing_tab.set_portion_margin(margin)
